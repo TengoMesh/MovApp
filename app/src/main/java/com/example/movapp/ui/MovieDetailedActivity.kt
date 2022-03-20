@@ -1,5 +1,6 @@
 package com.example.movapp.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +26,7 @@ class MovieDetailedActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detailed_view_item)
@@ -33,6 +35,7 @@ class MovieDetailedActivity : AppCompatActivity() {
 
         findViewById<AppCompatTextView>(R.id.uTitle).text = listItem.name
         findViewById<AppCompatTextView>(R.id.uDescription).text = listItem.description
+        findViewById<AppCompatTextView>(R.id.uImdbRating).text = "Imdb: ${listItem.imdbRating?:"no rating"}"
 
         findViewById<AppCompatImageView>(R.id.uImage).let{
             Glide.with(this).load(listItem.imageUrl).into(it)
