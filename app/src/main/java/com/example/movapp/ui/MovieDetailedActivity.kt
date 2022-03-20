@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -40,6 +41,7 @@ class MovieDetailedActivity : AppCompatActivity() {
         findViewById<AppCompatButton>(R.id.uHideButton).setOnClickListener {
             listItem.isHidden = true
             MovieApplication.getDb().movieItemDao().insert(listItem)
+            Toast.makeText(this, "Movie hidden successfully", Toast.LENGTH_SHORT).show()
         }
     }
 }
