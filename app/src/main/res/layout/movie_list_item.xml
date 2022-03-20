@@ -21,7 +21,6 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:gravity="center"
-        app:layout_constraintEnd_toEndOf="@+id/uImage"
         app:layout_constraintStart_toStartOf="@+id/uImage"
         app:layout_constraintTop_toBottomOf="@+id/uImage" />
 

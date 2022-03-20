@@ -7,6 +7,7 @@ import com.example.movapp.data.MovieListItem
 import com.example.movapp.data.MovieListRepository
 
 class MovieListViewModel(fragmentName: String) : ViewModel(), MovieListAdapterCallback {
+    private var type = MovieFragmentType.fromTabName(fragmentName)
 
     var movieList = MutableLiveData<List<MovieListItem>>()
         private set
@@ -15,10 +16,12 @@ class MovieListViewModel(fragmentName: String) : ViewModel(), MovieListAdapterCa
 
     var itemToLaunch = MutableLiveData<MovieListItem?>()
 
-    private var currentSearchQuery: String? = null
-    private var currentPageLoaded = 0
+    var shouldSearchBeDisplayed = MutableLiveData<Boolean>().apply {
+        value = type == MovieFragmentType.ALL
+    }
 
-    private var type = MovieFragmentType.fromTabName(fragmentName)
+    private var currentSearchQuery: String? = null
+
     private val movieListRepository: MovieListRepository =
         FragmentPagerData.getMovieListRepository()
 

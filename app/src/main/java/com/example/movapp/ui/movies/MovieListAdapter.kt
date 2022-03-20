@@ -46,7 +46,7 @@ class MovieListAdapter(
         fun bind(item: MovieListItem) {
             Glide.with(uImage.context).load(item.imageUrl).into(uImage)
             uName.text = item.name
-            uImdbRating.text = "Imdb: ${item.imdbRating?: ""}"
+            uImdbRating.text = "Imdb: ${item.imdbRating?: "not present"}"
             itemView.setOnClickListener{
                 movieListAdapterCallback.onItemSelected(item)
             }

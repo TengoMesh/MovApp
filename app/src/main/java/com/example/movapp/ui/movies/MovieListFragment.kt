@@ -61,6 +61,14 @@ class MovieListFragment : Fragment() {
             }
         }
 
+        viewModel.shouldSearchBeDisplayed.observe(viewLifecycleOwner){
+            if(it) {
+                binding.uSearch.visibility = View.VISIBLE
+            }else{
+                binding.uSearch.visibility = View.GONE
+            }
+        }
+
         binding.uSearch.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
