@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movapp.R
 import com.example.movapp.data.MovieFragmentType
 import com.example.movapp.databinding.MovieListFragmentBinding
+import com.example.movapp.ui.MovieDetailedActivity
 
 class MovieListFragment : Fragment() {
 
@@ -36,7 +37,7 @@ class MovieListFragment : Fragment() {
         val fragmentFactory =
             MovieListViewModelFactory(requireArguments().getString(BUNDLE_TYPE_NAME)!!)
         viewModel = ViewModelProvider(this, fragmentFactory).get(MovieListViewModel::class.java)
-        movieListAdapter = MovieListAdapter(viewModel::onSelectionChanged)
+        movieListAdapter = MovieListAdapter(viewModel)
         val binding = setupBinding(inflater, container)
 
         viewModel.movieList.observe(viewLifecycleOwner) {
@@ -51,15 +52,37 @@ class MovieListFragment : Fragment() {
             }
         }
 
+        viewModel.itemToLaunch.observe(viewLifecycleOwner){
+            it?.let { movieItem ->
+                context?.let {
+                    it.startActivity(MovieDetailedActivity.getLaunchingIntent(movieItem, it))
+                }
+                viewModel.onInnerPageLaunched()
+            }
+        }
+
+        binding.uSearch.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.onQueryUpdated(query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean = false
+        })
+
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.provideListNextPage()
+        viewModel.onResume()
     }
 
-    private fun setupBinding(inflater: LayoutInflater, container: ViewGroup?): MovieListFragmentBinding {
+    private fun setupBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): MovieListFragmentBinding {
         val binding =
             DataBindingUtil.inflate<MovieListFragmentBinding>(
                 inflater,

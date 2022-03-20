@@ -10,15 +10,15 @@ data class ImdbApiSearchResponse(
     var expression: String?,
 
     @SerializedName("results")
-    var results: List<ImdbApiMovieDescription>
+    var results: List<ImdbApiMovieDescription>?,
+
+    @SerializedName("errorMessage")
+    var errorMessage: String? = null
 )
 
 data class ImdbApiMovieDescription(
     @SerializedName("id")
     var id: String?,
-
-    @SerializedName("resultType")
-    var resultType: String?,
 
     @SerializedName("title")
     var title: String?,
@@ -27,5 +27,8 @@ data class ImdbApiMovieDescription(
     var image: String?,
 
     @SerializedName("description")
-    var description: String?
+    var description: String?,
+
+    @SerializedName("imDbRating")
+    var imdbRating: String?
 )

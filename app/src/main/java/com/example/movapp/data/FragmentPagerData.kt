@@ -22,7 +22,7 @@ object FragmentPagerData {
 }
 
 interface MovieListRepository{
-    fun provideMovieList(page: Int = 0, callback: Callback)
+    fun searchForMovies(searchExpression: String, callback: Callback)
     fun addToFavourites(listItem: MovieListItem)
     fun removeFromFavourites(listItem: MovieListItem)
     fun getFavouritesLiveData(): LiveData<List<MovieListItem>>
@@ -44,7 +44,7 @@ class MovieFragmentProvider(private val fragmentType: MovieFragmentType): ViewPa
     override fun createFragment(): Fragment = MovieListFragment.newInstance(fragmentType)
 }
 enum class MovieFragmentType(val tabName: String) {
-    FAVOURITES("Favourites"), ALL("All Movies");
+    FAVOURITES("Favourites"), ALL("Search Movies");
     companion object {
         fun fromTabName(tabName: String): MovieFragmentType{
             return when(tabName){

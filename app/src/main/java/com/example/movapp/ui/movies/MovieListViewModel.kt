@@ -6,13 +6,16 @@ import com.example.movapp.data.MovieFragmentType
 import com.example.movapp.data.MovieListItem
 import com.example.movapp.data.MovieListRepository
 
-class MovieListViewModel(fragmentName: String) : ViewModel() {
+class MovieListViewModel(fragmentName: String) : ViewModel(), MovieListAdapterCallback {
 
     var movieList = MutableLiveData<List<MovieListItem>>()
         private set
 
     var textToDisplay = MutableLiveData<String?>()
 
+    var itemToLaunch = MutableLiveData<MovieListItem?>()
+
+    private var currentSearchQuery: String? = null
     private var currentPageLoaded = 0
 
     private var type = MovieFragmentType.fromTabName(fragmentName)
@@ -20,37 +23,65 @@ class MovieListViewModel(fragmentName: String) : ViewModel() {
         FragmentPagerData.getMovieListRepository()
 
 
-    fun provideListNextPage() {
+    fun onResume() {
         if (type == MovieFragmentType.FAVOURITES) {
             movieListRepository.getFavouritesLiveData().observeForever {
-                movieList.value = it
+                updateMovieList(it)
             }
-        } else {
-            movieListRepository.provideMovieList(currentPageLoaded++, object: MovieListRepository.Callback{
-                override fun onSuccess(list: List<MovieListItem>) {
-                    movieList.value = list
-                }
-
-                override fun onError(exception: Throwable) {
-                    textToDisplay.value = "error received with message = ${exception.message}"
-                }
-            })
         }
     }
 
-    fun onSelectionChanged(listItem: MovieListItem, isChecked: Boolean) {
-        if (isChecked) {
-            movieListRepository.addToFavourites(listItem)
+    fun onQueryUpdated(newSearchText: String?) {
+        textToDisplay.value = newSearchText
+        currentSearchQuery = newSearchText
+
+        if (currentSearchQuery.isNullOrEmpty()) {
+            textToDisplay.value = "the search expression should not be empty"
         } else {
-            movieListRepository.removeFromFavourites(listItem)
+            movieListRepository.searchForMovies(
+                currentSearchQuery!!,
+                object : MovieListRepository.Callback {
+                    override fun onSuccess(list: List<MovieListItem>) {
+                        updateMovieList(list)
+                    }
+
+                    override fun onError(exception: Throwable) {
+                        textToDisplay.value =
+                            "error received with message = ${exception.message}, keeping old content"
+                    }
+                })
         }
-        textToDisplay.value = "movie ${listItem.name} is favourite = $isChecked"
+    }
+
+    override fun onSelectionChanged(movieItem: MovieListItem, isFavouriteChecked: Boolean) {
+        if (isFavouriteChecked) {
+            movieListRepository.addToFavourites(movieItem)
+        } else {
+            movieListRepository.removeFromFavourites(movieItem)
+        }
+        textToDisplay.value = "movie ${movieItem.name} is favourite = $isFavouriteChecked"
+    }
+
+    override fun onItemSelected(movieItem: MovieListItem) {
+        itemToLaunch.value = movieItem
+    }
+
+    fun onInnerPageLaunched() {
+        itemToLaunch.value = null
     }
 
     fun onTextDisplayed() {
         textToDisplay.value = null
     }
 
+    private fun updateMovieList(list: List<MovieListItem>) {
+        movieList.value = list
+//            if (currentSearchQuery.isNullOrEmpty()) {
+//            list
+//        } else {
+//            list.filter { it.name.contains(currentSearchQuery!!) }
+//        }
+    }
 }
 
 
