@@ -5,6 +5,8 @@ import com.example.movapp.ui.movies.MovieListFragment
 import java.lang.UnsupportedOperationException
 
 object FragmentPagerData {
+
+
     private val fragmentList = listOf<ViewPagerFragmentProvider>(
         MovieFragmentProvider(MovieFragmentType.FAVOURITES),
         MovieFragmentProvider(MovieFragmentType.ALL)
@@ -13,13 +15,15 @@ object FragmentPagerData {
     fun getMovieFragmentProviderList(): List<ViewPagerFragmentProvider> = fragmentList
 
     fun getMovieListRepository(forFragmentType: MovieFragmentType): MovieListRepository{
-        return MockMovieListRepository(forFragmentType)
+        return MockMovieListRepository.getInstance(forFragmentType)
     }
 
 }
 
 interface MovieListRepository{
     fun provideMovieList(page: Int = 0, callback: (list: List<MovieListItem>) -> Unit)
+    fun addToFavourites(listItem: MovieListItem)
+    fun removeFromFavourites(listItem: MovieListItem)
 }
 
 interface ViewPagerFragmentProvider{

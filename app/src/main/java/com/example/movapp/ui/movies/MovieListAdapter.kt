@@ -13,17 +13,23 @@ import com.bumptech.glide.Glide
 import com.example.movapp.R
 import com.example.movapp.data.MovieListItem
 
-class MovieListAdapter : ListAdapter<MovieListItem, MovieListAdapter.ViewHolder>(MovieDifUtils()) {
+class MovieListAdapter(
+    private val favouriteChangeListener: (movieItem: MovieListItem, isFavouriteChecked: Boolean) -> Unit
+) :
+    ListAdapter<MovieListItem, MovieListAdapter.ViewHolder>(MovieDifUtils()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder.from(parent)
+        return ViewHolder.from( favouriteChangeListener, parent)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+        private val favouriteChangeListener: (movieItem: MovieListItem, isFavouriteChecked: Boolean) -> Unit,
+        view: View
+    ) : RecyclerView.ViewHolder(view) {
 
         private val uImage = view.findViewById<AppCompatImageView>(R.id.uImage)
         private val uName = view.findViewById<AppCompatTextView>(R.id.uMovieName)
@@ -31,14 +37,23 @@ class MovieListAdapter : ListAdapter<MovieListItem, MovieListAdapter.ViewHolder>
 
 
         fun bind(item: MovieListItem) {
-            Glide.with(uImage.context).load(item.imageUrl).into(uImage);
+            Glide.with(uImage.context).load(item.imageUrl).into(uImage)
             uName.text = item.name
             uIsFavouriteSwitch.isChecked = item.isFavourite
+            uIsFavouriteSwitch.setOnCheckedChangeListener { _, isChecked ->
+                if(item.isFavourite != isChecked) {
+                    favouriteChangeListener(item, isChecked)
+                }
+            }
         }
 
 
         companion object {
-            fun from(parent: ViewGroup): ViewHolder = ViewHolder(
+            fun from(
+                favouriteChangeListener: (movieItem: MovieListItem, isFavouriteChecked: Boolean) -> Unit,
+                parent: ViewGroup
+            ): ViewHolder = ViewHolder(
+                favouriteChangeListener,
                 LayoutInflater.from(parent.context).inflate(R.layout.movie_list_item, parent, false)
             )
         }

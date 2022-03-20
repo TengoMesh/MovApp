@@ -13,21 +13,39 @@ class MovieListViewModel(fragmentName: String) : ViewModel() {
     var movieList = MutableLiveData<List<MovieListItem>>()
         private set
 
+    var textToDisplay = MutableLiveData<String?>()
+
     private var currentPageLoaded = 0;
 
     private val movieListRepository: MovieListRepository = FragmentPagerData.getMovieListRepository(
         MovieFragmentType.fromTabName(fragmentName)
     )
 
-    init {
+
+    fun provideListNextPage(){
         movieListRepository.provideMovieList(currentPageLoaded++){
-            list ->
-            movieList.value = mutableListOf<MovieListItem>().apply {
-                addAll(movieList.value?: emptyList());
-                addAll(list)
-            }
+                list ->
+            movieList.value = list
+//           = mutableListOf<MovieListItem>().apply {
+//                addAll(movieList.value?: emptyList());
+//                addAll(list)
+//            }
         }
     }
+
+    fun onSelectionChanged(listItem: MovieListItem, isChecked: Boolean){
+        if(isChecked){
+            movieListRepository.addToFavourites(listItem)
+        }else{
+            movieListRepository.removeFromFavourites(listItem)
+        }
+        textToDisplay.value = "movie ${listItem.name} is favourite = $isChecked"
+    }
+
+    fun onTextDisplayed() {
+        textToDisplay.value = null
+    }
+
 
 }
 
