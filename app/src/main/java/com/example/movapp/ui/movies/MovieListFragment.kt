@@ -1,4 +1,4 @@
-package com.example.movapp.ui
+package com.example.movapp.ui.movies
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movapp.R
 import com.example.movapp.data.MovieFragmentType
 import com.example.movapp.databinding.MovieListFragmentBinding
@@ -24,6 +25,7 @@ class MovieListFragment : Fragment() {
     }
 
     private lateinit var viewModel: MovieListViewModel
+    private var movieListAdapter = MovieListAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,11 +47,16 @@ class MovieListFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-        return binding.root
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+
+        binding.uMovieList.layoutManager = LinearLayoutManager(context)
+        binding.uMovieList.adapter = movieListAdapter
+
+        viewModel.movieList.observe(viewLifecycleOwner){
+            movieListAdapter.submitList(it)
+        }
+
+        return binding.root
     }
 
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MovApp</string>
+    <string name="is_favourite">is favourite</string>
+    <string name="placeholder_value">...</string>
 </resources>

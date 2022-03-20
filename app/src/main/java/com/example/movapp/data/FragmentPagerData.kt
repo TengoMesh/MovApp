@@ -1,7 +1,7 @@
 package com.example.movapp.data
 
 import androidx.fragment.app.Fragment
-import com.example.movapp.ui.MovieListFragment
+import com.example.movapp.ui.movies.MovieListFragment
 import java.lang.UnsupportedOperationException
 
 object FragmentPagerData {

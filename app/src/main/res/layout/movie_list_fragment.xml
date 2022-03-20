@@ -5,18 +5,19 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.movapp.ui.MovieListViewModel" />
+            type="com.example.movapp.ui.movies.MovieListViewModel" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.MovieListFragment">
+        tools:context=".ui.movies.MovieListFragment">
 
-        <TextView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/uMovieList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@{viewModel.name}" />
+            />
 
     </FrameLayout>
 </layout>
