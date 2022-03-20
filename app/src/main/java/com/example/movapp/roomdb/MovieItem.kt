@@ -4,29 +4,28 @@ import androidx.room.*
 import androidx.room.OnConflictStrategy.*
 
 import androidx.lifecycle.LiveData
-
-@Entity(tableName = "movie_item")
-data class MovieItem(
-    @PrimaryKey val id: Int,
-    val name: String,
-    val imageUrl: String,
-    var isFavourite: Boolean
-)
+import com.example.movapp.data.MovieListItem
 
 @Dao
 interface MovieItemDao{
     @Insert(onConflict = IGNORE)
-    suspend fun insert(word: MovieItem)
+    fun insert(item: MovieListItem)
 
     @Query("SELECT * from movie_item")
-    fun getAllMovieItems(): LiveData<List<MovieItem>>
+    fun getAllMovieItemsLiveData(): LiveData<List<MovieListItem>>
+
+    @Query("SELECT * from movie_item")
+    fun getAllFavourites(): List<MovieListItem>
 
     @Query("DELETE FROM movie_item")
-    suspend fun deleteAll()
+    fun deleteAll()
+
+    @Delete()
+    fun delete(item: MovieListItem)
 }
 
 
-@Database(entities = [MovieItem::class], version = 1)
+@Database(entities = [MovieListItem::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun movieItemDao(): MovieItemDao
 }

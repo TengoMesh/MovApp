@@ -21,6 +21,7 @@ class MovieApplication : Application() {
             if (appDb == null) {
                 appDb = Room.databaseBuilder(this, AppDatabase::class.java, "movie_database")
                     .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
                     .build()
             }
         }

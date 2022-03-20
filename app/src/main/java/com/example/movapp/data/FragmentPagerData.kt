@@ -1,6 +1,7 @@
 package com.example.movapp.data
 
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import com.example.movapp.ui.movies.MovieListFragment
 import java.lang.UnsupportedOperationException
 
@@ -14,16 +15,22 @@ object FragmentPagerData {
 
     fun getMovieFragmentProviderList(): List<ViewPagerFragmentProvider> = fragmentList
 
-    fun getMovieListRepository(forFragmentType: MovieFragmentType): MovieListRepository{
-        return MockMovieListRepository.getInstance(forFragmentType)
+    fun getMovieListRepository(): MovieListRepository{
+        return ImdbMovieListRepository()
     }
 
 }
 
 interface MovieListRepository{
-    fun provideMovieList(page: Int = 0, callback: (list: List<MovieListItem>) -> Unit)
+    fun provideMovieList(page: Int = 0, callback: Callback)
     fun addToFavourites(listItem: MovieListItem)
     fun removeFromFavourites(listItem: MovieListItem)
+    fun getFavouritesLiveData(): LiveData<List<MovieListItem>>
+
+    interface Callback{
+        fun onSuccess(list: List<MovieListItem>)
+        fun onError(exception: Throwable)
+    }
 }
 
 interface ViewPagerFragmentProvider{

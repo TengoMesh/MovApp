@@ -1,8 +1,6 @@
 package com.example.movapp.ui.movies
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.example.movapp.data.FragmentPagerData
 import com.example.movapp.data.MovieFragmentType
 import com.example.movapp.data.MovieListItem
@@ -15,28 +13,35 @@ class MovieListViewModel(fragmentName: String) : ViewModel() {
 
     var textToDisplay = MutableLiveData<String?>()
 
-    private var currentPageLoaded = 0;
+    private var currentPageLoaded = 0
 
-    private val movieListRepository: MovieListRepository = FragmentPagerData.getMovieListRepository(
-        MovieFragmentType.fromTabName(fragmentName)
-    )
+    private var type = MovieFragmentType.fromTabName(fragmentName)
+    private val movieListRepository: MovieListRepository =
+        FragmentPagerData.getMovieListRepository()
 
 
-    fun provideListNextPage(){
-        movieListRepository.provideMovieList(currentPageLoaded++){
-                list ->
-            movieList.value = list
-//           = mutableListOf<MovieListItem>().apply {
-//                addAll(movieList.value?: emptyList());
-//                addAll(list)
-//            }
+    fun provideListNextPage() {
+        if (type == MovieFragmentType.FAVOURITES) {
+            movieListRepository.getFavouritesLiveData().observeForever {
+                movieList.value = it
+            }
+        } else {
+            movieListRepository.provideMovieList(currentPageLoaded++, object: MovieListRepository.Callback{
+                override fun onSuccess(list: List<MovieListItem>) {
+                    movieList.value = list
+                }
+
+                override fun onError(exception: Throwable) {
+                    textToDisplay.value = "error received with message = ${exception.message}"
+                }
+            })
         }
     }
 
-    fun onSelectionChanged(listItem: MovieListItem, isChecked: Boolean){
-        if(isChecked){
+    fun onSelectionChanged(listItem: MovieListItem, isChecked: Boolean) {
+        if (isChecked) {
             movieListRepository.addToFavourites(listItem)
-        }else{
+        } else {
             movieListRepository.removeFromFavourites(listItem)
         }
         textToDisplay.value = "movie ${listItem.name} is favourite = $isChecked"
@@ -45,7 +50,6 @@ class MovieListViewModel(fragmentName: String) : ViewModel() {
     fun onTextDisplayed() {
         textToDisplay.value = null
     }
-
 
 }
 
